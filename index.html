@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mappr — AI-Powered Hiring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f0f;
+  --ink2: #3a3a3a;
+  --ink3: #6b6b6b;
+  --ink4: #a0a0a0;
+  --paper: #fafaf8;
+  --paper2: #f2f2ee;
+  --paper3: #e8e8e2;
+  --accent: #1a6b3c;
+  --accent2: #2d9e5f;
+  --accent-light: #eaf5ef;
+  --accent-mid: #c2e8d2;
+  --warn: #c45c1a;
+  --warn-light: #fdf0e8;
+  --danger: #b03a3a;
+  --danger-light: #faeaea;
+  --info: #1a4a8a;
+  --info-light: #e8f0fa;
+  --border: #e0e0d8;
+  --border2: #d0d0c8;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.05);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── PAGES ── */
+.page { display: none; min-height: 100vh; }
+.page.active { display: flex; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-logo .wordmark {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.sidebar-logo .tagline {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 3px;
+  font-weight: 300;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.25);
+  padding: 12px 12px 6px;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.nav-link:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+.nav-link.active { background: var(--accent); color: #fff; font-weight: 500; }
+
+.nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
+.nav-link.active .nav-icon { opacity: 1; }
+
+.sidebar-user {
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: #fff;
+  flex-shrink: 0;
+}
+
+.user-name { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
+.user-role { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: 220px;
+  flex: 1;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-title { font-size: 15px; font-weight: 500; color: var(--ink); }
+.topbar-sub { font-size: 13px; color: var(--ink3); }
+.topbar-spacer { flex: 1; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: #155c32; }
+.btn-outline { background: transparent; color: var(--ink2); border-color: var(--border2); }
+.btn-outline:hover { background: var(--paper2); border-color: var(--border); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-danger { background: var(--danger-light); color: var(--danger); border-color: #f0c0c0; }
+
+/* ── CONTENT ── */
+.content { padding: 28px; }
+
+/* ── STAT CARDS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+
+.stat-card-label { font-size: 12px; color: var(--ink3); margin-bottom: 6px; font-weight: 400; }
+.stat-card-val { font-size: 26px; font-weight: 600; color: var(--ink); line-height: 1; }
+.stat-card-sub { font-size: 12px; color: var(--ink4); margin-top: 5px; }
+.stat-card-val.green { color: var(--accent); }
+.stat-card-val.amber { color: var(--warn); }
+.stat-card-val.red { color: var(--danger); }
+.stat-card-val.blue { color: var(--info); }
+
+/* ── CARDS ── */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+.card-body { padding: 20px; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-green { background: var(--accent-light); color: var(--accent); }
+.badge-blue { background: var(--info-light); color: var(--info); }
+.badge-amber { background: var(--warn-light); color: var(--warn); }
+.badge-red { background: var(--danger-light); color: var(--danger); }
+.badge-gray { background: var(--paper2); color: var(--ink3); }
+
+/* ── TABLES ── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  text-align: left; padding: 10px 14px;
+  font-size: 11px; font-weight: 600;
+  color: var(--ink3); text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+  background: var(--paper2);
+}
+.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--ink2); vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--paper2); }
+
+/* ── SCORE BAR ── */
+.score-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.score-bar-bg { flex: 1; height: 5px; background: var(--paper3); border-radius: 3px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 3px; }
+.score-num { font-size: 13px; font-weight: 600; min-width: 28px; text-align: right; }
+
+/* ── INSIGHT BAR ── */
+.insight-bar {
+  background: var(--info-light);
+  border: 1px solid #c5d8f0;
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  display: flex; gap: 20px; flex-wrap: wrap;
+  font-size: 12px; color: var(--info);
+  margin-bottom: 20px;
+}
+
+.insight-item { display: flex; align-items: center; gap: 6px; }
+.insight-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── CANDIDATE ROWS ── */
+.c-row {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+.c-row:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+.c-row.open { border-color: var(--accent-mid); }
+
+.c-row-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+}
+
+.rank-badge {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: var(--paper2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: var(--ink3);
+  flex-shrink: 0;
+}
+.rank-badge.top { background: #fdf6e3; color: #b08020; }
+
+.c-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
+}
+
+.c-info { flex: 1; min-width: 0; }
+.c-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.c-summary { font-size: 12px; color: var(--ink3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.c-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.score-pill {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+}
+.sp-strong { background: var(--accent-light); color: var(--accent); }
+.sp-good { background: var(--info-light); color: var(--info); }
+.sp-avg { background: var(--warn-light); color: var(--warn); }
+.sp-weak { background: var(--danger-light); color: var(--danger); }
+
+.c-detail {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 16px;
+  background: var(--paper2);
+}
+.c-detail.open { display: block; }
+
+.detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
+.detail-box { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+.detail-box-label { font-size: 11px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+
+.skill-tag { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 5px; margin: 2px 2px 2px 0; font-weight: 500; }
+.skill-match { background: var(--accent-light); color: var(--accent); }
+.skill-miss { background: var(--danger-light); color: var(--danger); }
+.skill-crit { background: var(--warn-light); color: var(--warn); }
+
+.exp-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 12px; }
+.exp-item { display: flex; flex-direction: column; gap: 2px; }
+.exp-label { font-size: 11px; color: var(--ink4); }
+.exp-val { font-size: 13px; font-weight: 500; color: var(--ink); }
+
+.concern-box {
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 12px;
+  margin-bottom: 12px;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.concern-warn { background: var(--warn-light); color: var(--warn); border: 1px solid #f0d0b0; }
+.concern-ok { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-mid); }
+
+/* ── PIPELINE BARS ── */
+.pipeline-bar { margin-bottom: 10px; }
+.pipeline-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink2); margin-bottom: 4px; }
+.pipeline-bar-track { height: 8px; background: var(--paper3); border-radius: 4px; overflow: hidden; }
+.pipeline-bar-fill { height: 100%; border-radius: 4px; }
+
+/* ── JOB CARDS ── */
+.job-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.job-card:hover { border-color: var(--accent-mid); box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+.job-card-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.job-card-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.job-card-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.job-stat { background: var(--paper2); border-radius: 8px; padding: 8px 10px; text-align: center; }
+.job-stat-val { font-size: 16px; font-weight: 600; color: var(--ink); }
+.job-stat-label { font-size: 10px; color: var(--ink4); margin-top: 1px; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.empty-icon { font-size: 40px; opacity: 0.3; }
+.empty-title { font-size: 16px; font-weight: 500; color: var(--ink2); }
+.empty-sub { font-size: 13px; color: var(--ink4); max-width: 300px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  width: 520px;
+  max-width: 95vw;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.modal-title { font-size: 16px; font-weight: 500; }
+.modal-close { background: none; border: none; font-size: 20px; color: var(--ink3); cursor: pointer; padding: 0; line-height: 1; }
+.modal-body { padding: 20px 24px; }
+.modal-footer { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ── FORM ── */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; letter-spacing: 0.03em; }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,107,60,0.08); }
+.form-textarea { min-height: 100px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  z-index: 999;
+  display: none;
+  align-items: center; gap: 8px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+}
+.toast.open { display: flex; }
+@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 10px 16px; font-size: 13px; font-weight: 500; color: var(--ink3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* ── SECTION HEADER ── */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+
+/* ── NOTIFICATION BADGE ── */
+.notif-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 9px;
+  background: var(--danger); color: #fff;
+  font-size: 10px; font-weight: 600;
+}
+
+/* ── PROGRESS RING ── */
+.pool-quality {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--paper2);
+  border-radius: var(--radius);
+  font-size: 12px;
+}
+
+/* ── ONBOARDING ── */
+.onboard-page {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboard-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 480px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.onboard-top {
+  background: var(--ink);
+  padding: 32px 36px 28px;
+}
+
+.onboard-wordmark {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.onboard-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.onboard-body { padding: 28px 36px 32px; }
+
+.step-indicator {
+  display: flex; gap: 6px; margin-bottom: 24px;
+}
+.step-dot {
+  height: 4px; border-radius: 2px; flex: 1;
+  background: var(--paper3);
+  transition: background 0.3s;
+}
+.step-dot.done { background: var(--accent); }
+.step-dot.active { background: var(--accent2); }
+
+.onboard-step { display: none; }
+.onboard-step.active { display: block; }
+
+.onboard-step-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 6px; }
+.onboard-step-sub { font-size: 13px; color: var(--ink3); margin-bottom: 22px; }
+
+/* ── ANALYTICS PAGE ── */
+.chart-bar-wrap { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-bottom: 0; }
+.chart-bar { flex: 1; border-radius: 4px 4px 0 0; position: relative; min-width: 20px; display: flex; align-items: flex-start; justify-content: center; }
+.chart-bar-label { font-size: 10px; color: var(--ink4); margin-top: 6px; position: absolute; bottom: -18px; white-space: nowrap; }
+.chart-bar-val { font-size: 10px; font-weight: 600; position: absolute; top: -16px; color: var(--ink2); }
+
+.heatmap-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 3px; }
+
+/* ── ANIMATIONS ── */
+.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     ONBOARDING PAGE
+═══════════════════════════════════════════ -->
+<div class="page active" id="page-onboarding" style="background:var(--paper);align-items:center;justify-content:center;flex-direction:column;">
+  <div class="onboard-card">
+    <div class="onboard-top">
+      <div class="onboard-wordmark">Mappr</div>
+      <div class="onboard-tagline">AI-powered hiring. Set up your workspace<br>in under 2 minutes.</div>
+    </div>
+    <div class="onboard-body">
+      <div class="step-indicator">
+        <div class="step-dot active" id="sd1"></div>
+        <div class="step-dot" id="sd2"></div>
+        <div class="step-dot" id="sd3"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="onboard-step active" id="step1">
+        <div class="onboard-step-title">Welcome to Mappr</div>
+        <div class="onboard-step-sub">Tell us about your company so we can personalise your experience.</div>
+        <div class="form-group">
+          <label class="form-label">Company name</label>
+          <input class="form-input" type="text" value="XY Technologies" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Industry</label>
+            <select class="form-select">
+              <option>Technology / SaaS</option>
+              <option>E-commerce</option>
+              <option>Fintech</option>
+              <option>Healthcare</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company size</label>
+            <select class="form-select">
+              <option>1–50</option>
+              <option selected>51–200</option>
+              <option>201–500</option>
+              <option>500+</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="nextStep(2)">Continue →</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="onboard-step" id="step2">
+        <div class="onboard-step-title">Your recruiter profile</div>
+        <div class="onboard-step-sub">This is how you'll appear on the platform.</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input class="form-input" type="text" value="Priya" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input class="form-input" type="text" value="Sharma" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Work email</label>
+          <input class="form-input" type="email" value="priya@xytechnologies.in" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <select class="form-select">
+            <option>Recruiter</option>
+            <option>Senior Recruiter</option>
+            <option selected>Talent Acquisition Lead</option>
+            <option>HR Manager</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline" style="flex:1;" onclick="nextStep(1)">← Back</button>
+          <button class="btn btn-primary" style="flex:2;" onclick="nextStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="onboard-step" id="step3">
+        <div class="onboard-step-title">You're all set</div>
+        <div class="onboard-step-sub">Mappr is ready. Post your first job and let the AI do the screening.</div>
+        <div style="background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--radius);padding:16px;margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:8px;">What happens next</div>
+          <div style="font-size:12px;color:var(--ink2);display:flex;flex-direction:column;gap:6px;">
+            <div>✓ Post a job description — AI extracts requirements automatically</div>
+            <div>✓ Candidates apply — AI scores every resume in ~15 seconds</div>
+            <div>✓ Open your dashboard — see a ranked list, ready to act on</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="goToDashboard()">Enter workspace →</button>
+      </div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--ink4);margin-top:16px;">XY Technologies · Starter plan · 500 analyses/month</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN APP (all inner pages share this shell)
+═══════════════════════════════════════════ -->
+<div class="page" id="page-app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">Mappr</div>
+      <div class="tagline">XY Technologies</div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Hiring</div>
+      <a class="nav-link active" onclick="showView('dashboard')" id="nav-dashboard">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-link" onclick="showView('jobs')" id="nav-jobs">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Jobs
+        <span class="notif-badge" style="margin-left:auto;">3</span>
+      </a>
+      <a class="nav-link" onclick="showView('candidates')" id="nav-candidates">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Candidates
+      </a>
+      <div class="nav-section-label">Insights</div>
+      <a class="nav-link" onclick="showView('analytics')" id="nav-analytics">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12l3.5-4 3 2.5L12 5l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Analytics
+      </a>
+      <div class="nav-section-label">Account</div>
+      <a class="nav-link" onclick="showView('settings')" id="nav-settings">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 2v1M8 13v1M2 8h1M13 8h1M3.757 3.757l.707.707M11.536 11.536l.707.707M3.757 12.243l.707-.707M11.536 4.464l.707-.707" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Settings
+      </a>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">PS</div>
+      <div>
+        <div class="user-name">Priya Sharma</div>
+        <div class="user-role">TA Lead</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- ── DASHBOARD VIEW ── -->
+    <div id="view-dashboard" class="fade-in">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">Dashboard</div>
+          <div class="topbar-sub">Good morning, Priya · Monday, April 2026</div>
+        </div>
+        <div class="topbar-spacer"></div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-job')">+ Post a job</button>
+      </div>
+      <div class="content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-label">Active job postings</div>
+            <div class="stat-card-val">6</div>
+            <div class="stat-card-sub">2 closing this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Total applicants</div>
+            <div class="stat-card-val blue">481</div>
+            <div class="stat-card-sub">+38 in last 24h</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Strong fit candidates</div>
+            <div class="stat-card-val green">94</div>
+            <div class="stat-card-sub">Across all open roles</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Analyses used</div>
+            <div class="stat-card-val amber">312 / 500</div>
+            <div class="stat-card-sub">188 remaining this month</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <!-- Active Jobs -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Active jobs</div>
+              <button class="btn btn-outline btn-sm" onclick="showView('jobs')">View all</button>
+            </div>
+            <div class="card-body" style="padding:0;">
+              <table class="data-table">
+                <thead><tr><th>Role</th><th>Applicants</th><th>Strong fit</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr onclick="showView('job-detail')" style="cursor:pointer;">
+                    <td><div style="font-weight:500;font-size:13px;">Senior Data Scientist</div><div style="font-size:11px;color:var(--ink4);">Bengaluru · Full-time</div></td>
+                    <td>143</td>
+                    <td><span style="font-weight:600;color:var(--accent);">19</span></td>
+                    <td><span class="badge badge-green">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500;font-size:13px;">Backend Engineer</div><div style="font-size:11px;color:var(--ink4);">Remote · Full-time</div></td>
+                    <td>98</td>
+                    <td><span style="font-weight:600;color:var(--accent);">24</span></td>
+                    <td><span class="badge badge-green">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500;font-size:13px;">Product Manager</div><div style="font-size:11px;color:var(--ink4);">Mumbai · Full-time</div></td>
+                    <td>77</td>
+                    <td><span style="font-weight:600;color:var(--accent);">11</span></td>
+                    <td><span class="badge badge-amber">Closing soon</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500;font-size:13px;">ML Engineer</div><div style="font-size:11px;color:var(--ink4);">Bengaluru · Full-time</div></td>
+                    <td>63</td>
+                    <td><span style="font-weight:600;color:var(--accent);">18</span></td>
+                    <td><span class="badge badge-green">Active</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pipeline Health -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Pool quality overview</div>
+            </div>
+            <div class="card-body">
+              <div style="margin-bottom:16px;">
+                <div class="pipeline-bar">
+                  <div class="pipeline-bar-label"><span>Senior Data Scientist</span><span style="color:var(--ink3);">Avg 63</span></div>
+                  <div class="pipeline-bar-track"><div class="pipeline-bar-fill" style="width:63%;background:var(--accent);"></div></div>
+                </div>
+                <div class="pipeline-bar">
+                  <div class="pipeline-bar-label"><span>Backend Engineer</span><span style="color:var(--ink3);">Avg 71</span></div>
+                  <div class="pipeline-bar-track"><div class="pipeline-bar-fill" style="width:71%;background:var(--accent2);"></div></div>
+                </div>
+                <div class="pipeline-bar">
+                  <div class="pipeline-bar-label"><span>Product Manager</span><span style="color:var(--ink3);">Avg 58</span></div>
+                  <div class="pipeline-bar-track"><div class="pipeline-bar-fill" style="width:58%;background:var(--warn);"></div></div>
+                </div>
+                <div class="pipeline-bar">
+                  <div class="pipeline-bar-label"><span>ML Engineer</span><span style="color:var(--ink3);">Avg 74</span></div>
+                  <div class="pipeline-bar-track"><div class="pipeline-bar-fill" style="width:74%;background:var(--accent2);"></div></div>
+                </div>
+              </div>
+              <div style="font-size:12px;color:var(--ink3);background:var(--warn-light);border-radius:var(--radius);padding:10px 12px;color:var(--warn);">
+                ⚠ Product Manager pool is weak (avg 58). Consider relaxing experience requirement or broadening JD.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent AI analyses</div>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Candidate</th><th>Role</th><th>Score</th><th>Verdict</th><th>Analysed</th></tr></thead>
+              <tbody>
+                <tr><td><div style="font-weight:500;">Arjun Mehta</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--accent);">94</span></td><td><span class="badge badge-green">Strong fit</span></td><td style="color:var(--ink4);">2 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Sneha Rao</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--accent);">91</span></td><td><span class="badge badge-green">Strong fit</span></td><td style="color:var(--ink4);">8 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Vikram Nair</div></td><td>Backend Engineer</td><td><span style="font-weight:600;color:var(--info);">85</span></td><td><span class="badge badge-blue">Good fit</span></td><td style="color:var(--ink4);">14 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Rohan Verma</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--info);">85</span></td><td><span class="badge badge-blue">Good fit</span></td><td style="color:var(--ink4);">31 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Ananya Desai</div></td><td>Product Manager</td><td><span style="font-weight:600;color:var(--warn);">61</span></td><td><span class="badge badge-amber">Average fit</span></td><td style="color:var(--ink4);">1 hr ago</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── JOB DETAIL VIEW ── -->
+    <div id="view-job-detail" style="display:none;" class="fade-in">
+      <div class="topbar">
+        <button class="btn btn-outline btn-sm" onclick="showView('jobs')" style="margin-right:4px;">← Back</button>
+        <div>
+          <div class="topbar-title">Senior Data Scientist</div>
+          <div class="topbar-sub">Job ID: JD-2041 · Posted 6 days ago · Bengaluru / Remote</div>
+        </div>
+        <div class="topbar-spacer"></div>
+        <span class="badge badge-green" style="margin-right:8px;">Active</span>
+        <button class="btn btn-outline btn-sm">Edit JD</button>
+      </div>
+      <div class="content">
+        <!-- Stats -->
+        <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);">
+          <div class="stat-card"><div class="stat-card-label">Total applicants</div><div class="stat-card-val">143</div><div class="stat-card-sub">+12 since yesterday</div></div>
+          <div class="stat-card"><div class="stat-card-label">Strong fit</div><div class="stat-card-val green">19</div><div class="stat-card-sub">score ≥ 90</div></div>
+          <div class="stat-card"><div class="stat-card-label">Good fit</div><div class="stat-card-val blue">38</div><div class="stat-card-sub">score 80–89</div></div>
+          <div class="stat-card"><div class="stat-card-label">Avg experience</div><div class="stat-card-val amber">2.8 yr</div><div class="stat-card-sub">JD requires 4 yr</div></div>
+          <div class="stat-card"><div class="stat-card-label">Pool avg score</div><div class="stat-card-val">63</div><div class="stat-card-sub">out of 100</div></div>
+        </div>
+
+        <!-- Insight bar -->
+        <div class="insight-bar">
+          <div class="insight-item"><div class="insight-dot" style="background:#b03a3a;"></div> Experience gap: JD asks 4 yr — pool avg is 2.8 yr. Consider relaxing.</div>
+          <div class="insight-item"><div class="insight-dot" style="background:var(--warn);"></div> "Cohort Analysis" missing in 71% of applicants.</div>
+          <div class="insight-item"><div class="insight-dot" style="background:var(--info);"></div> 13 applicants have points of concern (job hopping / gaps).</div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm active-filter" id="f-all" onclick="filterJ('all',this)" style="background:var(--ink);color:#fff;border-color:var(--ink);">All (143)</button>
+          <button class="btn btn-outline btn-sm" id="f-strong" onclick="filterJ('strong',this)">Strong fit (19)</button>
+          <button class="btn btn-outline btn-sm" id="f-good" onclick="filterJ('good',this)">Good fit (38)</button>
+          <button class="btn btn-outline btn-sm" id="f-avg" onclick="filterJ('avg',this)">Average (52)</button>
+          <button class="btn btn-outline btn-sm" id="f-weak" onclick="filterJ('weak',this)">Weak (34)</button>
+        </div>
+
+        <div style="font-size:12px;color:var(--ink4);margin-bottom:10px;">Showing top 5 candidates · ranked by composite AI score</div>
+
+        <!-- Candidate list -->
+        <div id="jd-clist"></div>
+      </div>
+    </div>
+
+    <!-- ── JOBS LIST VIEW ── -->
+    <div id="view-jobs" style="display:none;" class="fade-in">
+      <div class="topbar">
+        <div class="topbar-title">Jobs</div>
+        <div class="topbar-spacer"></div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-job')">+ Post a job</button>
+      </div>
+      <div class="content">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+          <div class="job-card" onclick="showView('job-detail')">
+            <div class="job-card-title">Senior Data Scientist</div>
+            <div class="job-card-meta"><span class="badge badge-green">Active</span><span class="badge badge-gray">Bengaluru</span><span class="badge badge-gray">Full-time</span></div>
+            <div class="job-card-stats">
+              <div class="job-stat"><div class="job-stat-val">143</div><div class="job-stat-label">Applicants</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--accent);">19</div><div class="job-stat-label">Strong fit</div></div>
+              <div class="job-stat"><div class="job-stat-val">63</div><div class="job-stat-label">Avg score</div></div>
+            </div>
+          </div>
+          <div class="job-card">
+            <div class="job-card-title">Backend Engineer (Node.js)</div>
+            <div class="job-card-meta"><span class="badge badge-green">Active</span><span class="badge badge-gray">Remote</span><span class="badge badge-gray">Full-time</span></div>
+            <div class="job-card-stats">
+              <div class="job-stat"><div class="job-stat-val">98</div><div class="job-stat-label">Applicants</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--accent);">24</div><div class="job-stat-label">Strong fit</div></div>
+              <div class="job-stat"><div class="job-stat-val">71</div><div class="job-stat-label">Avg score</div></div>
+            </div>
+          </div>
+          <div class="job-card">
+            <div class="job-card-title">Product Manager</div>
+            <div class="job-card-meta"><span class="badge badge-amber">Closing soon</span><span class="badge badge-gray">Mumbai</span><span class="badge badge-gray">Full-time</span></div>
+            <div class="job-card-stats">
+              <div class="job-stat"><div class="job-stat-val">77</div><div class="job-stat-label">Applicants</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--accent);">11</div><div class="job-stat-label">Strong fit</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--warn);">58</div><div class="job-stat-label">Avg score</div></div>
+            </div>
+          </div>
+          <div class="job-card">
+            <div class="job-card-title">ML Engineer</div>
+            <div class="job-card-meta"><span class="badge badge-green">Active</span><span class="badge badge-gray">Bengaluru</span><span class="badge badge-gray">Full-time</span></div>
+            <div class="job-card-stats">
+              <div class="job-stat"><div class="job-stat-val">63</div><div class="job-stat-label">Applicants</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--accent);">18</div><div class="job-stat-label">Strong fit</div></div>
+              <div class="job-stat"><div class="job-stat-val">74</div><div class="job-stat-label">Avg score</div></div>
+            </div>
+          </div>
+          <div class="job-card">
+            <div class="job-card-title">DevOps Engineer</div>
+            <div class="job-card-meta"><span class="badge badge-green">Active</span><span class="badge badge-gray">Remote</span><span class="badge badge-gray">Full-time</span></div>
+            <div class="job-card-stats">
+              <div class="job-stat"><div class="job-stat-val">54</div><div class="job-stat-label">Applicants</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--accent);">14</div><div class="job-stat-label">Strong fit</div></div>
+              <div class="job-stat"><div class="job-stat-val">69</div><div class="job-stat-label">Avg score</div></div>
+            </div>
+          </div>
+          <div class="job-card">
+            <div class="job-card-title">UX Designer</div>
+            <div class="job-card-meta"><span class="badge badge-gray">Draft</span><span class="badge badge-gray">Bengaluru</span></div>
+            <div class="job-card-stats">
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--ink4);">—</div><div class="job-stat-label">Applicants</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--ink4);">—</div><div class="job-stat-label">Strong fit</div></div>
+              <div class="job-stat"><div class="job-stat-val" style="color:var(--ink4);">—</div><div class="job-stat-label">Avg score</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CANDIDATES VIEW ── -->
+    <div id="view-candidates" style="display:none;" class="fade-in">
+      <div class="topbar">
+        <div class="topbar-title">All candidates</div>
+        <div class="topbar-spacer"></div>
+        <input class="form-input" placeholder="Search by name..." style="width:220px;padding:7px 12px;font-size:13px;" />
+      </div>
+      <div class="content">
+        <div class="tabs">
+          <div class="tab active">All (481)</div>
+          <div class="tab">Strong fit (94)</div>
+          <div class="tab">Shortlisted (28)</div>
+          <div class="tab">Rejected (41)</div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Candidate</th><th>Applied for</th><th>Score</th><th>Verdict</th><th>Experience</th><th>Company type</th><th>Analysed</th></tr></thead>
+              <tbody>
+                <tr onclick="showView('job-detail')" style="cursor:pointer;"><td><div style="font-weight:500;">Arjun Mehta</div><div style="font-size:11px;color:var(--ink4);">arjun.m@gmail.com</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--accent);">94</span></td><td><span class="badge badge-green">Strong fit</span></td><td>5 yr 2 mo</td><td><span class="badge badge-gray">Product</span></td><td style="color:var(--ink4);">2 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Sneha Rao</div><div style="font-size:11px;color:var(--ink4);">sneha.r@outlook.com</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--accent);">91</span></td><td><span class="badge badge-green">Strong fit</span></td><td>4 yr 6 mo</td><td><span class="badge badge-gray">Product</span></td><td style="color:var(--ink4);">8 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Vikram Nair</div><div style="font-size:11px;color:var(--ink4);">vnair@proton.me</div></td><td>Backend Engineer</td><td><span style="font-weight:600;color:var(--info);">88</span></td><td><span class="badge badge-blue">Good fit</span></td><td>4 yr 0 mo</td><td><span class="badge badge-gray">Startup</span></td><td style="color:var(--ink4);">14 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Divya Krishnan</div><div style="font-size:11px;color:var(--ink4);">divya.k@gmail.com</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--info);">82</span></td><td><span class="badge badge-blue">Good fit</span></td><td>4 yr 1 mo</td><td><span class="badge badge-gray">Product</span></td><td style="color:var(--ink4);">31 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Rohan Verma</div><div style="font-size:11px;color:var(--ink4);">rohan.v@gmail.com</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--info);">85</span></td><td><span class="badge badge-blue">Good fit</span></td><td>3 yr 8 mo</td><td><span class="badge badge-gray">Services</span></td><td style="color:var(--ink4);">31 min ago</td></tr>
+                <tr><td><div style="font-weight:500;">Karan Thakur</div><div style="font-size:11px;color:var(--ink4);">karan.t@yahoo.com</div></td><td>Senior Data Scientist</td><td><span style="font-weight:600;color:var(--warn);">74</span></td><td><span class="badge badge-amber">Average fit</span></td><td>2 yr 3 mo</td><td><span class="badge badge-gray">Startup</span></td><td style="color:var(--ink4);">1 hr ago</td></tr>
+                <tr><td><div style="font-weight:500;">Ananya Desai</div><div style="font-size:11px;color:var(--ink4);">ananya.d@gmail.com</div></td><td>Product Manager</td><td><span style="font-weight:600;color:var(--warn);">61</span></td><td><span class="badge badge-amber">Average fit</span></td><td>3 yr 0 mo</td><td><span class="badge badge-gray">Mix</span></td><td style="color:var(--ink4);">1 hr ago</td></tr>
+                <tr><td><div style="font-weight:500;">Suresh Kumar</div><div style="font-size:11px;color:var(--ink4);">s.kumar@gmail.com</div></td><td>ML Engineer</td><td><span style="font-weight:600;color:var(--danger);">48</span></td><td><span class="badge badge-red">Weak fit</span></td><td>1 yr 4 mo</td><td><span class="badge badge-gray">Services</span></td><td style="color:var(--ink4);">2 hr ago</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS VIEW ── -->
+    <div id="view-analytics" style="display:none;" class="fade-in">
+      <div class="topbar">
+        <div class="topbar-title">Analytics</div>
+        <div class="topbar-sub">April 2026 · All jobs</div>
+        <div class="topbar-spacer"></div>
+        <select class="form-select" style="width:160px;padding:7px 10px;font-size:13px;">
+          <option>Last 30 days</option>
+          <option>Last 90 days</option>
+          <option>All time</option>
+        </select>
+      </div>
+      <div class="content">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-card-label">Total analyses run</div><div class="stat-card-val">312</div><div class="stat-card-sub">This month</div></div>
+          <div class="stat-card"><div class="stat-card-label">Strong fit rate</div><div class="stat-card-val green">19.5%</div><div class="stat-card-sub">94 of 481 candidates</div></div>
+          <div class="stat-card"><div class="stat-card-label">Avg time-to-analyse</div><div class="stat-card-val blue">14s</div><div class="stat-card-sub">Per resume</div></div>
+          <div class="stat-card"><div class="stat-card-label">Avg pool score</div><div class="stat-card-val">67</div><div class="stat-card-sub">Across all open roles</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <!-- Score distribution -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Score distribution — Senior Data Scientist</div></div>
+            <div class="card-body">
+              <div style="position:relative;margin-bottom:28px;">
+                <div class="chart-bar-wrap">
+                  <div class="chart-bar" style="height:20%;background:var(--danger-light);border:1px solid #f0c0c0;"><span class="chart-bar-val" style="color:var(--danger);">8</span><span class="chart-bar-label">0–49</span></div>
+                  <div class="chart-bar" style="height:35%;background:var(--warn-light);border:1px solid #f0d0b0;"><span class="chart-bar-val" style="color:var(--warn);">18</span><span class="chart-bar-label">50–59</span></div>
+                  <div class="chart-bar" style="height:55%;background:var(--warn-light);border:1px solid #f0d0b0;"><span class="chart-bar-val" style="color:var(--warn);">26</span><span class="chart-bar-label">60–69</span></div>
+                  <div class="chart-bar" style="height:65%;background:var(--info-light);border:1px solid #c5d8f0;"><span class="chart-bar-val" style="color:var(--info);">32</span><span class="chart-bar-label">70–79</span></div>
+                  <div class="chart-bar" style="height:80%;background:var(--info-light);border:1px solid #c5d8f0;"><span class="chart-bar-val" style="color:var(--info);">38</span><span class="chart-bar-label">80–89</span></div>
+                  <div class="chart-bar" style="height:45%;background:var(--accent-light);border:1px solid var(--accent-mid);"><span class="chart-bar-val" style="color:var(--accent);">19</span><span class="chart-bar-label">90–100</span></div>
+                </div>
+              </div>
+              <div style="font-size:12px;color:var(--ink3);">Pool is skewed mid-range (70–89). Strong candidates present but limited. Recommendation: consider expanding sourcing channels.</div>
+            </div>
+          </div>
+
+          <!-- Top missing skills -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Top missing skills — all roles</div></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>Cohort Analysis</span><span style="color:var(--danger);">71% missing</span></div><div class="score-bar-bg" style="height:6px;"><div class="score-bar-fill" style="width:71%;background:var(--danger);"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>Apache Spark</span><span style="color:var(--warn);">58% missing</span></div><div class="score-bar-bg" style="height:6px;"><div class="score-bar-fill" style="width:58%;background:var(--warn);"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>A/B Testing</span><span style="color:var(--warn);">44% missing</span></div><div class="score-bar-bg" style="height:6px;"><div class="score-bar-fill" style="width:44%;background:var(--warn);"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>Kubernetes</span><span style="color:var(--info);">39% missing</span></div><div class="score-bar-bg" style="height:6px;"><div class="score-bar-fill" style="width:39%;background:var(--info);"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>System Design</span><span style="color:var(--info);">31% missing</span></div><div class="score-bar-bg" style="height:6px;"><div class="score-bar-fill" style="width:31%;background:var(--info);"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>dbt / Data Modelling</span><span style="color:var(--ink4);">22% missing</span></div><div class="score-bar-bg" style="height:6px;"><div class="score-bar-fill" style="width:22%;background:var(--ink4);"></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pool quality by role -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Verdict breakdown by role</div></div>
+          <div class="card-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Role</th><th>Applicants</th><th>Strong fit</th><th>Good fit</th><th>Average</th><th>Weak</th><th>Avg score</th><th>Pool quality</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:500;">Senior Data Scientist</td><td>143</td><td><span style="color:var(--accent);font-weight:600;">19 (13%)</span></td><td><span style="color:var(--info);">38 (27%)</span></td><td>52 (36%)</td><td style="color:var(--danger);">34 (24%)</td><td>63</td><td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:63%;background:var(--accent);"></div></div><span class="score-num" style="color:var(--accent);">63</span></div></td></tr>
+                <tr><td style="font-weight:500;">Backend Engineer</td><td>98</td><td><span style="color:var(--accent);font-weight:600;">24 (24%)</span></td><td><span style="color:var(--info);">29 (30%)</span></td><td>28 (29%)</td><td style="color:var(--danger);">17 (17%)</td><td>71</td><td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:71%;background:var(--accent2);"></div></div><span class="score-num" style="color:var(--accent2);">71</span></div></td></tr>
+                <tr><td style="font-weight:500;">Product Manager</td><td>77</td><td><span style="color:var(--accent);font-weight:600;">11 (14%)</span></td><td><span style="color:var(--info);">15 (19%)</span></td><td>28 (36%)</td><td style="color:var(--danger);">23 (30%)</td><td>58</td><td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:58%;background:var(--warn);"></div></div><span class="score-num" style="color:var(--warn);">58</span></div></td></tr>
+                <tr><td style="font-weight:500;">ML Engineer</td><td>63</td><td><span style="color:var(--accent);font-weight:600;">18 (29%)</span></td><td><span style="color:var(--info);">20 (32%)</span></td><td>16 (25%)</td><td style="color:var(--danger);">9 (14%)</td><td>74</td><td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:74%;background:var(--accent2);"></div></div><span class="score-num" style="color:var(--accent2);">74</span></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS VIEW ── -->
+    <div id="view-settings" style="display:none;" class="fade-in">
+      <div class="topbar">
+        <div class="topbar-title">Settings</div>
+      </div>
+      <div class="content" style="max-width:600px;">
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-header"><div class="card-title">Company profile</div></div>
+          <div class="card-body">
+            <div class="form-group"><label class="form-label">Company name</label><input class="form-input" value="XY Technologies" /></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Industry</label><select class="form-select"><option selected>Technology / SaaS</option></select></div>
+              <div class="form-group"><label class="form-label">Company size</label><select class="form-select"><option selected>51–200</option></select></div>
+            </div>
+            <button class="btn btn-primary btn-sm">Save changes</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-header"><div class="card-title">Usage & plan</div></div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div><div style="font-weight:500;font-size:14px;">Starter plan</div><div style="font-size:12px;color:var(--ink3);">500 analyses/month · 1 recruiter seat</div></div>
+              <span class="badge badge-blue">Active</span>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Analyses used</span><span><strong>312</strong> / 500</span></div>
+              <div class="score-bar-bg" style="height:8px;"><div class="score-bar-fill" style="width:62.4%;background:var(--warn);"></div></div>
+            </div>
+            <div style="font-size:12px;color:var(--ink4);margin-bottom:14px;">Resets May 1, 2026</div>
+            <button class="btn btn-outline btn-sm">Upgrade to Pro →</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recruiter profile</div></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">First name</label><input class="form-input" value="Priya" /></div>
+              <div class="form-group"><label class="form-label">Last name</label><input class="form-input" value="Sharma" /></div>
+            </div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="priya@xytechnologies.in" /></div>
+            <button class="btn btn-primary btn-sm">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .main -->
+</div><!-- end page-app -->
+
+<!-- ═══════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-new-job" onclick="closeModalOnBg(event, 'modal-new-job')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Post a new job</div>
+      <button class="modal-close" onclick="closeModal('modal-new-job')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Job title</label>
+        <input class="form-input" placeholder="e.g. Senior Data Scientist" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input class="form-input" placeholder="e.g. Bengaluru / Remote" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Employment type</label>
+          <select class="form-select"><option>Full-time</option><option>Contract</option><option>Internship</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Job description</label>
+        <textarea class="form-textarea" placeholder="Paste the full job description here. Mappr's AI will extract requirements, skills, and seniority automatically..." style="min-height:140px;"></textarea>
+      </div>
+      <div style="background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--radius);padding:10px 12px;font-size:12px;color:var(--accent);">
+        ✓ AI will automatically extract skills, seniority, domain, and experience requirements from your JD.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-job')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitJob()">Post job →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span>✓</span>
+  <span id="toast-msg">Saved</span>
+</div>
+
+<script>
+// ── DATA ──
+const candidates = [
+  { id:1, rank:1, name:"Arjun Mehta", initials:"AM", bg:"#eaf5ef", fg:"#1a6b3c",
+    verdict:"strong_fit", score:94,
+    summary:"5 yr ML/DS at Flipkart and Swiggy. Strong domain fit for e-commerce analytics.",
+    exp:"5 yr 2 mo", ft:"5 yr 2 mo", intern:"—", edu:"Full", ctx:"Product-based",
+    relevant:"Retail analytics, demand forecasting, recommendation systems",
+    matched:["Python","SQL","A/B Testing","Spark","scikit-learn","Product Analytics"],
+    missing:["Cohort Analysis"], critical:[], concern:null },
+  { id:2, rank:2, name:"Sneha Rao", initials:"SR", bg:"#e8f5fa", fg:"#1a4a8a",
+    verdict:"strong_fit", score:91,
+    summary:"4.5 yr in DS at PhonePe and Razorpay. Fintech domain expert, strong stats background.",
+    exp:"4 yr 6 mo", ft:"4 yr 6 mo", intern:"—", edu:"Full", ctx:"Product-based",
+    relevant:"Fintech analytics, fraud detection, customer segmentation",
+    matched:["Python","SQL","Statistical Modelling","scikit-learn","Cohort Analysis"],
+    missing:["Spark"], critical:[], concern:null },
+  { id:3, rank:3, name:"Rohan Verma", initials:"RV", bg:"#f2f2ee", fg:"#5f5e5a",
+    verdict:"good_fit", score:85,
+    summary:"3.5 yr DS at services firm with product exposure. Good Python and ML skills.",
+    exp:"3 yr 8 mo", ft:"3 yr", intern:"8 mo", edu:"Partial", ctx:"Services / mix",
+    relevant:"Some retail project exposure, mostly client-driven work",
+    matched:["Python","SQL","scikit-learn","A/B Testing"],
+    missing:["Cohort Analysis","Spark"], critical:[],
+    concern:"Majority of experience is services-based. Domain depth may be shallow." },
+  { id:4, rank:4, name:"Divya Krishnan", initials:"DK", bg:"#fdf0e8", fg:"#c45c1a",
+    verdict:"good_fit", score:82,
+    summary:"4 yr in analytics at Myntra. Strong domain fit for e-commerce. SQL and Python solid.",
+    exp:"4 yr 1 mo", ft:"4 yr 1 mo", intern:"—", edu:"Full", ctx:"Product-based",
+    relevant:"E-commerce analytics, customer LTV, pricing models",
+    matched:["Python","SQL","Product Analytics","Cohort Analysis"],
+    missing:["Spark","A/B Testing","scikit-learn"], critical:["scikit-learn"],
+    concern:null },
+  { id:5, rank:5, name:"Karan Thakur", initials:"KT", bg:"#faeaea", fg:"#b03a3a",
+    verdict:"avg_fit", score:74,
+    summary:"2 yr experience. Strong academic profile, limited real-world depth.",
+    exp:"2 yr 3 mo", ft:"1 yr 6 mo", intern:"9 mo", edu:"Full", ctx:"Startup",
+    relevant:"Limited — mainly academic projects and one startup stint",
+    matched:["Python","SQL","scikit-learn"],
+    missing:["Cohort Analysis","Spark","A/B Testing","Product Analytics"], critical:["A/B Testing"],
+    concern:"Only 1.5 yr full-time experience. May be underprepared for senior role." }
+];
+
+function vLabel(v) { return {strong_fit:'Strong fit',good_fit:'Good fit',avg_fit:'Average fit',weak_fit:'Weak fit'}[v]; }
+function vClass(v) { return {strong_fit:'badge-green',good_fit:'badge-blue',avg_fit:'badge-amber',weak_fit:'badge-red'}[v]; }
+function spClass(s) { if(s>=90)return'sp-strong';if(s>=80)return'sp-good';if(s>=70)return'sp-avg';return'sp-weak'; }
+function barColor(s) { if(s>=90)return'var(--accent)';if(s>=80)return'var(--info)';if(s>=70)return'var(--warn)';return'var(--danger)'; }
+
+function renderCandidates(list) {
+  const el = document.getElementById('jd-clist');
+  el.innerHTML = list.map(c => `
+    <div class="c-row" id="cr${c.id}" onclick="toggleC(${c.id})">
+      <div class="c-row-top">
+        <div class="rank-badge ${c.rank<=3?'top':''}">#${c.rank}</div>
+        <div class="c-avatar" style="background:${c.bg};color:${c.fg};">${c.initials}</div>
+        <div class="c-info">
+          <div class="c-name">${c.name}</div>
+          <div class="c-summary">${c.summary}</div>
+        </div>
+        <div class="c-right">
+          <span class="badge ${vClass(c.verdict)}">${vLabel(c.verdict)}</span>
+          <div class="score-pill ${spClass(c.score)}">${c.score}</div>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" id="ci${c.id}" style="color:var(--ink4);transition:transform 0.2s;"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div class="c-detail" id="cd${c.id}">
+        <div class="exp-row">
+          <div class="exp-item"><span class="exp-label">Total exp</span><span class="exp-val">${c.exp}</span></div>
+          <div class="exp-item"><span class="exp-label">Full-time</span><span class="exp-val">${c.ft}</span></div>
+          <div class="exp-item"><span class="exp-label">Internship</span><span class="exp-val">${c.intern}</span></div>
+          <div class="exp-item"><span class="exp-label">Education</span><span class="exp-val">${c.edu}</span></div>
+          <div class="exp-item"><span class="exp-label">Company type</span><span class="exp-val">${c.ctx}</span></div>
+        </div>
+        ${c.concern
+          ? `<div class="concern-box concern-warn"><span>⚠</span><span>${c.concern}</span></div>`
+          : `<div class="concern-box concern-ok"><span>✓</span><span>No points of concern</span></div>`}
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-box-label">Matched skills</div>
+            ${c.matched.map(s=>`<span class="skill-tag skill-match">${s}</span>`).join('')}
+          </div>
+          <div class="detail-box">
+            <div class="detail-box-label">Missing skills</div>
+            ${c.missing.length ? c.missing.map(s=>`<span class="skill-tag ${c.critical.includes(s)?'skill-crit':'skill-miss'}">${s}${c.critical.includes(s)?' ★':''}</span>`).join('') : '<span style="font-size:12px;color:var(--ink4);">None</span>'}
+          </div>
+          <div class="detail-box">
+            <div class="detail-box-label">Relevant experience</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.6;">${c.relevant}</div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+renderCandidates(candidates);
+
+function toggleC(id) {
+  const det = document.getElementById('cd'+id);
+  const icon = document.getElementById('ci'+id);
+  const row = document.getElementById('cr'+id);
+  const open = det.classList.contains('open');
+  det.classList.toggle('open', !open);
+  row.classList.toggle('open', !open);
+  icon.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function filterJ(f, btn) {
+  document.querySelectorAll('[id^=f-]').forEach(b => {
+    b.style.background='';b.style.color='';b.style.borderColor='';
+  });
+  btn.style.background='var(--ink)';btn.style.color='#fff';btn.style.borderColor='var(--ink)';
+  let list = candidates;
+  if(f==='strong') list = candidates.filter(c=>c.score>=90);
+  else if(f==='good') list = candidates.filter(c=>c.score>=80&&c.score<90);
+  else if(f==='avg') list = candidates.filter(c=>c.score>=70&&c.score<80);
+  else if(f==='weak') list = candidates.filter(c=>c.score<70);
+  renderCandidates(list);
+}
+
+// ── NAVIGATION ──
+function showView(v) {
+  document.querySelectorAll('[id^=view-]').forEach(el => el.style.display='none');
+  const el = document.getElementById('view-'+v);
+  if(el) { el.style.display='block'; el.classList.add('fade-in'); }
+
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const map = {'dashboard':'nav-dashboard','jobs':'nav-jobs','job-detail':'nav-jobs','candidates':'nav-candidates','analytics':'nav-analytics','settings':'nav-settings'};
+  const nav = document.getElementById(map[v]);
+  if(nav) nav.classList.add('active');
+}
+
+// ── ONBOARDING ──
+let currentStep = 1;
+function nextStep(n) {
+  document.getElementById('step'+currentStep).classList.remove('active');
+  document.getElementById('sd'+currentStep).classList.remove('active');
+  document.getElementById('sd'+currentStep).classList.add('done');
+  currentStep = n;
+  document.getElementById('step'+n).classList.add('active');
+  if(n <= 3) document.getElementById('sd'+n).classList.add('active');
+}
+
+function goToDashboard() {
+  document.getElementById('page-onboarding').style.display = 'none';
+  const app = document.getElementById('page-app');
+  app.style.display = 'flex';
+  showView('dashboard');
+  showToast('Welcome to Mappr, Priya! 🎉');
+}
+
+// ── MODALS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOnBg(e, id) { if(e.target.id===id) closeModal(id); }
+
+function submitJob() {
+  closeModal('modal-new-job');
+  showToast('Job posted. AI is extracting requirements...');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('open');
+  setTimeout(() => t.classList.remove('open'), 3000);
+}
+</script>
+</body>
+</html>
